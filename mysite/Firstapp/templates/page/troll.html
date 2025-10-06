@@ -1,0 +1,27 @@
+{% extends "page/base.html" %}
+{% load static %}
+
+{% block title %}
+{{block.super}} - game
+{% endblock %}
+
+
+
+
+{% block content %}
+    <div class="container-fluid">
+        <div class='row' 
+                 style="height: 100vh; 
+                    style='display: flex; 
+                    justify-content: center; 
+                    align-items: center">
+            <div class="col-sm-3 text-center">
+            </div>
+            <div class="col-sm-6">
+                <img src="{% static image_url %}" alt="ảnh test" class="img-fluid" style="max-height:450px;" />
+            </div> 
+        </div>
+    </div>
+    
+
+{% endblock %}

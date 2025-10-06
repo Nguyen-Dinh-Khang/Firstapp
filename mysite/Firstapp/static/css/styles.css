@@ -1,0 +1,54 @@
+.sidebar {
+  position: relative;
+  background: transparent;
+  z-index: 0; /* nền */
+}
+.sidebar::before {
+  content: "";
+  position: absolute;
+  inset: 0; /* phủ toàn bộ */
+  background: rgba(128, 128, 128, 0.7); /* màu xám mờ như giấy mỏng */
+  backdrop-filter: blur(2px); /* tùy chọn: làm mờ background phía sau */
+  z-index: -1; /* nằm dưới nội dung */
+  border-radius: 8px; /* nếu muốn bo góc */
+}
+
+
+
+
+.sidebar_foodapp {
+  position: relative;
+  background: transparent;
+  z-index: 0; /* nền */
+}
+.sidebar_foodapp::before {
+  content: "";
+  position: absolute;
+  inset: 0; /* phủ toàn bộ */
+  background: rgba(128, 128, 128, 0.4); /* màu xám mờ như giấy mỏng */
+  backdrop-filter: blur(2px); /* tùy chọn: làm mờ background phía sau */
+  z-index: -1; /* nằm dưới nội dung */
+  border-radius: 8px; /* nếu muốn bo góc */
+}
+
+
+
+
+.sidebar_post {
+  position: relative;
+  background: transparent;
+  z-index: 0; /* nền */
+}
+.sidebar_post::before {
+  content: "";
+  position: absolute;
+  inset: 0; /* phủ toàn bộ */
+  background: rgba(128, 128, 128, 0.4); /* màu xám mờ như giấy mỏng */
+  backdrop-filter: blur(2px); /* tùy chọn: làm mờ background phía sau */
+  z-index: -1; /* nằm dưới nội dung */
+  border-radius: 8px; /* nếu muốn bo góc */
+}
+
+
+
+

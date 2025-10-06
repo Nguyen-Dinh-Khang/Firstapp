@@ -1,0 +1,91 @@
+<html lang="en">
+<head>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Foodapp{% endblock %}</title>
+    {% block head %}{% endblock %}
+
+    <!-- Đặt CSS chung ở đây -->
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh; /* luôn phủ đủ chiều cao màn hình */
+            background-image: url("{% static 'images/Food3.jpg' %}");
+            background-size: cover;   /* co giãn phủ hết màn hình */
+            background-position: center; /* canh giữa */
+            background-repeat: no-repeat; /* không lặp */
+            background-attachment: fixed; /* giữ cố định khi cuộn */
+        }
+    </style>
+</head>
+
+
+<body>
+<div class="container-fluid">
+    <div class="row" style="height: 100vh">
+        <div class="col-sm-2 text-center sidebar_foodapp" 
+             style='position: fixed;'>
+
+            <div class='row' style='height: 1vh'></div>
+            <div class='row' style='height: 9vh'>
+                <a href="{% url 'introduce' %}">
+                    <img src="{% static 'images/Food.jpg' %}" 
+                        alt="ảnh test" 
+                        class="img-fluid" 
+                        style="max-height:100px; width: 100%" />
+                </a>
+            </div>
+            
+            <div class='row' 
+                 style="height: 80vh; 
+                    style='display: flex; 
+                    justify-content: center; 
+                    align-items: center">
+                <ul class="nav flex-column" style="color: white">
+                    <li><a class="nav-link" href="{% url 'foodadd' %}"><p style="color: #94f476ff; font-weight: bold">ADD NEW DISH</p></a></li>                   
+                    <li><a class="nav-link" href="{% url 'foodrandom' %}"><p style="color: #94f476ff; font-weight: bold">CREATE RANDOM DISH</p></a></li>
+                    <li><a class="nav-link" href="{% url 'foodlist' %}"><p style="color: #94f476ff; font-weight: bold">LIST</p></a></li>
+                    <li><a class="nav-link" href="{% url 'test' %}"><p style="color: #94f476ff; font-weight: bold">TEST</p></a></li>
+                </ul>
+            </div>
+
+            <div class='row' style='height: 10vh'>
+                <div class='col-sm-6 text-center'>
+                    {% if user.username %}
+                        <button>{{ user.username }}</button>
+                    {% else %}
+                        <form action="{% url 'login' %}" method="POST">
+                            {% csrf_token %}
+                            <input type="submit" value=" login ">
+                        </form>
+                    {% endif %}
+                </div>
+                <div class='col-sm-6 text-center'>
+                    <form action="{% url 'logout' %}" method="POST">
+                        {% csrf_token %}
+                        <input type="submit" value="logout">
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2 text-center"></div>
+        <div class="col-sm-10 text-center">
+            <div style='
+                    display: flex; 
+                    justify-content: center; 
+                    align-items: flex-start; 
+                    color: white;'>
+            
+            {% block content %}
+            
+            {% endblock %}
+            </div>
+        </div>    
+    </div> 
+</div>
+</body>
+</html>

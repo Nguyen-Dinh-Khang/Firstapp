@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+env/
+.venv/
+myenv/
+
+# Django
+db.sqlite3
+media/
+staticfiles/
+*.log
+
+# Environment variables
+.env
+
+# VSCode
+.vscode/
+
+# Migrations cache
+*/migrations/__pycache__/
+
+# Custom folders/files you don't want to track
+knowledge/
+Test.py
+
+

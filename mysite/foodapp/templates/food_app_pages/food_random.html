@@ -1,0 +1,71 @@
+{% extends 'food_app_pages/foodapp_base.html' %}
+
+
+
+{% block content %}
+<div class='container-fluid'>
+    <div class='row' style='height: 13vh'></div>
+    <div class="row" style='height: 26vh'>
+        <div class='col-sm-2 text-center'></div>
+        <div class='col-sm-8 text-center'>
+            <h2>CHỌN MÓN NGẪU NHIÊN</h2>
+            <form method='POST'>
+                {% csrf_token %}
+                <h5><label>
+                    <input type="checkbox" name="is_vegetarian" value="1" {% if is_vegetarian %}checked{% endif %}>
+                    Ăn chay
+                </label></h5>
+
+                <div class="row mb-3">
+                    <div class="col-sm-3">
+                        <label for="soup_count" class="form-label">Món canh</label>
+                        <input type="number" id="soup_count" name="soup_count" class="form-control" min="0" value="{{ soup_count }}">
+                    </div>
+
+                    <div class="col-sm-3">
+                        <label for="stirfry_count" class="form-label">Món xào-kho</label>
+                        <input type="number" id="stirfry_count" name="stirfry_count" class="form-control" min="0" value="{{ stirfry_count }}">
+                    </div>
+
+                    <div class="col-sm-3">
+                        <label for="fried_count" class="form-label">Món chiên</label>
+                        <input type="number" id="fried_count" name="fried_count" class="form-control" min="0" value="{{ fried_count }}">
+                    </div>
+
+                    <div class="col-sm-3">
+                        <label for="boiled_count" class="form-label">Món luộc-hấp</label>
+                        <input type="number" id="boiled_count" name="boiled_count" class="form-control" min="0" value="{{ boiled_count }}">
+                    </div>
+                </div>
+
+                <button type='submit' class='btn btn-primary'>Tạo danh sách</button>
+            </form>
+        </div>
+    </div>
+    <br>
+    <div class='row' style='height: 57vh'>
+        <div class='col-sm-2 text-center'></div>
+        <div class='col-sm-8'>
+            <div class='row'>
+            <div class='col-sm-8 text-start'>
+                {% for category, dishes in grouped_random.items %}
+                <h5>{{ category }}</h5>
+                <ul>
+                    {% for dish in dishes %}
+                    {% if is_vegetarian %}<li>{{ dish.dish_vegetarian_name }}</li>{% endif %}
+                    {% if not is_vegetarian %}<li>{{ dish.dish_name }}</li>{% endif %}
+                    {% endfor %}
+                </ul>
+                {% endfor %}
+            </div>
+            <div class='col-sm-4 text-start'>
+                <h5>Ingredients:</h5>
+                {%for ingredient in ingredients%}
+                    <li>{{ ingredient }}</li>
+                {% endfor %}
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "blog/blog_base.html" %}
+
+
+
+{% block content%}
+<div class='container-fluid'>
+    <div class='row' style='height: 20vh'></div>
+    <div class='row' style='height: 50vh'>
+        <div class='col-sm-3'></div>
+        <div class='col-sm-6'>
+            <!-- Hiển thị lỗi form nếu có -->
+            {% if form.errors %}
+                <div style="color: red;">
+                <p>Vui lòng sửa các lỗi sau:</p>
+                <ul>
+                    {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ field.label }}: {{ error }}</li>
+                    {% endfor %}
+                    {% endfor %}
+                </ul>
+                </div>
+            {% endif %}
+
+            <!-- Form -->
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="mb-3">
+                    <p style='color: white'>{{ field.label_tag }}</p>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="text-danger">{{ field.errors }}</div>
+                    {% endif %}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary">Đăng bài</button>
+            </form>
+        </div>
+        <div class='col-sm-3'></div>
+    </div>
+</div>
+{% endblock%}

@@ -1,0 +1,226 @@
+{% extends "blog/blog_base.html" %}
+{% load static %}
+
+{% block head %}
+<title>Chat Realtime</title>
+<style>
+    #chat-container {
+        width: 100%;
+        max-width: 600px;
+        background: rgba(0, 0, 0, 0.6);
+        border-radius: 10px;
+        padding: 15px;
+        color: white;
+        margin: 100px auto;
+    }
+
+    #chat-log {
+        height: 400px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        background-color: rgba(255, 255, 255, 0.1);
+        padding: 10px;
+        overflow-y: auto;
+        margin-bottom: 10px;
+        scroll-behavior: smooth;
+    }
+
+    #chat-message-input {
+        width: 75%;
+        border: none;
+        border-radius: 5px;
+        padding: 8px;
+        outline: none;
+    }
+
+    #chat-message-submit {
+        width: 20%;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 8px;
+        font-weight: bold;
+    }
+
+    #chat-message-submit:hover {
+        background-color: #218838;
+        cursor: pointer;
+    }
+
+    .message-user {
+        text-align: right;
+        color: #aef1a8;
+        margin: 4px 0;
+    }
+
+    .message-other {
+        text-align: left;
+        color: #ffb6b6;
+        margin: 4px 0;
+    }
+
+    .system-message {
+        text-align: center;
+        font-style: italic;
+        color: #b0b0b0;
+        margin: 4px 0;
+    }
+
+    .time {
+    font-size: 0.8em;
+    color: #b0b0b0;
+    margin-left: 6px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="chat-container">
+    <h3 class="text-center">💬 Chat Realtime</h3>
+    {% if error_message %}
+    <p class="text-red-500">{{ error_message }}</p>
+    {% endif %} 
+    <div id="chat-log">
+        {% if chat_messages %}
+            {% for msg in chat_messages %}
+                {% if msg.author.author_name == current_author_name %}
+                    <div class="message-user">
+                        <b>Bạn:</b> {{ msg.context }}
+                        <span class="time">({{ msg.date|date:"H:i" }})</span>
+                    </div>
+                {% else %}
+                    <div class="message-other">
+                        <b>{{ msg.author.author_name }}:</b> {{ msg.context }}
+                        <span class="time">({{ msg.date|date:"H:i" }})</span>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <div class="system-message">💬 Bắt đầu cuộc trò chuyện mới</div>
+        {% endif %}
+    </div>
+
+    <div class="d-flex justify-content-between">
+        <input id="chat-message-input" type="text" placeholder="Nhập tin nhắn..." />
+        <button id="chat-message-submit">Gửi</button>
+    </div>
+</div>
+
+<script>
+    // ====== 1️⃣ Các hàm tiện ích ======
+    const chatLog = document.getElementById('chat-log');
+    const inputField = document.getElementById('chat-message-input');
+    const sendBtn = document.getElementById('chat-message-submit');
+
+    // Escape HTML để tránh XSS (bảo mật)
+    function escapeHTML(str) {
+        return str.replace(/[&<>"']/g, tag => (
+            {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[tag] || tag
+        ));
+    }
+
+    // Hiển thị tin nhắn
+    function addUserMessage(message) {
+        const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+        chatLog.innerHTML += `<div class="message-user"><b>Bạn:</b> ${escapeHTML(message)} <span class="time">(${time})</span></div>`;
+        chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    function addOtherMessage(author, message) {
+        const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+        chatLog.innerHTML += `<div class="message-other"><b>${escapeHTML(author)}:</b> ${escapeHTML(message)} <span class="time">(${time})</span></div>`;
+        chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    function addSystemMessage(message) {
+        chatLog.innerHTML += `<div class="system-message">${escapeHTML(message)}</div>`;
+        chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    // ====== 2️⃣ Thiết lập kết nối WebSocket ======
+    const currentAuthorname = "{{ current_author_name }}";
+    const roomId = "{{ room_id }}"; 
+    const wsUrl = `ws://${window.location.host}/ws/chat/${roomId}/`; 
+    console.log("🔗 WebSocket URL:", wsUrl);
+
+    if (!roomId || roomId === 'None') {
+        addSystemMessage('⚠️ Lỗi: Không tìm thấy ID phòng hợp lệ. Không thể kết nối chat.');
+    } else {
+        let chatSocket = null;
+        let reconnectTimer = null;
+
+        function connectWebSocket() {
+            chatSocket = new WebSocket(wsUrl);
+
+            chatSocket.onopen = function() {
+                clearTimeout(reconnectTimer);
+                addSystemMessage('✅ Đã kết nối đến server');
+                inputField.disabled = false;
+                sendBtn.disabled = false;
+                inputField.focus();
+            };
+
+            chatSocket.onmessage = function(e) {
+                const data = JSON.parse(e.data);
+
+                if (data.source === "room_broadcast") {
+                    if (data.author_name === currentAuthorname) {
+                        addUserMessage(data.message);
+                    } else {
+                        addOtherMessage(data.author_name, data.message);
+                    }
+                } else {
+                    addSystemMessage(data.message);
+                }
+            };
+
+            chatSocket.onclose = function() {
+                addSystemMessage('❌ Mất kết nối WebSocket. Thử kết nối lại sau 3 giây...');
+                inputField.disabled = true;
+                sendBtn.disabled = true;
+
+                // Tự động kết nối lại sau 3 giây
+                reconnectTimer = setTimeout(connectWebSocket, 3000);
+            };
+
+            chatSocket.onerror = function() {
+                addSystemMessage('⚠️ Lỗi khi kết nối đến server.');
+                chatSocket.close();
+            };
+        }
+
+        connectWebSocket();
+
+        // ====== 3️⃣ Xử lý gửi tin nhắn ======
+        function sendMessage() {
+            const message = inputField.value.trim();
+            if (!message) return;
+
+            if (chatSocket.readyState === WebSocket.OPEN) {
+                chatSocket.send(JSON.stringify({
+                    'message': message,
+                    'author_name': currentAuthorname
+                }));
+                inputField.value = '';
+                inputField.focus();
+
+                // Chống spam gửi quá nhanh
+                sendBtn.disabled = true;
+                setTimeout(() => sendBtn.disabled = false, 200);
+            } else {
+                addSystemMessage('⚠️ Kết nối chưa sẵn sàng. Hãy đợi server kết nối lại.');
+            }
+        }
+
+        sendBtn.onclick = sendMessage;
+        inputField.addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        // Focus tự động khi tải trang
+        window.onload = () => inputField.focus();
+    }
+</script>
+
+{% endblock %}

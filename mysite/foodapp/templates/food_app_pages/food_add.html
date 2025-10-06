@@ -1,0 +1,94 @@
+{% extends 'food_app_pages/foodapp_base.html' %}
+
+
+
+{% block content %}
+<div class="container-fluid">
+    <div class='row' style='height: 20vh'></div>
+    <div class="row" style='height: 80vh'>
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4 text-center">
+            <h2>THÊM MÓN ĂN MỚI</h2>
+
+            <form action="{% url 'foodadd' %}" method="POST">
+              {% csrf_token %}
+
+              <!-- Tên món -->
+              <div class="mb-3">
+                {{ dishadd.dish_name.label_tag }}
+                {{ dishadd.dish_name }}
+                {% if dishadd.dish_name.errors %}
+                  <div class="text-danger small">
+                    {{ dishadd.dish_name.errors }}
+                  </div>
+                {% endif %}
+                {% if dishadd.non_field_errors %}
+                  <div class="text-danger small">
+                    {{ dishadd.non_field_errors }}
+                  </div>
+                {% endif %}
+              </div>
+
+
+              <!-- Loại món -->
+              <div class="mb-3">
+                {{ dishadd.dish_category.label_tag }}
+                {{ dishadd.dish_category }}
+                {% if dishadd.dish_category.errors %}
+                  <div class="text-danger small">
+                    {{ dishadd.dish_category.errors }}
+                  </div>
+                {% endif %}
+              </div>
+                  
+
+              <h6>Ingredient name:</h6>
+              <div id="ingredients-wrapper">
+                {# Nếu có ingredient_values (đã submit trước đó), hiển thị từng input với giá trị đó #}
+                {% if ingredient_values %}
+                  {% for value in ingredient_values %}
+                    <div class="ingredient-field mb-2">
+                      <input type="text" name="ingredient_name" value="{{ value }}" 
+                            class="form-control" placeholder="Nhập nguyên liệu">
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  {# Mặc định hiển thị 1 field từ form IngredientAdd #}
+                  <div class="ingredient-field mb-2">
+                    {{ ingredientadd.ingredient_name }}
+                    {% if ingredientadd.ingredient_name.errors %}
+                      <div class="text-danger small">
+                        {{ ingredientadd.ingredient_name.errors }}
+                      </div>
+                    {% endif %}
+                  </div>
+                {% endif %}
+              </div>
+
+              <div class='mb-3'>
+                {% if ingredient_errors %}
+                  {% for root, ingredients in ingredient_errors.items %}
+                    <p style='color: #ff0000ff'>{{ root }} kị với {{ ingredients|join:", " }}</p>
+                  {% endfor %}
+                {% endif %}
+              </div>
+
+              <button type="button" class="btn btn-secondary mb-3" onclick="addIngredientField()">+ Thêm nguyên liệu</button>
+              <br>
+              <input type="submit" value="Thêm món ăn" class="btn btn-primary">
+            </form>
+
+            <script>
+              function addIngredientField() {
+                const wrapper = document.getElementById("ingredients-wrapper");
+                const div = document.createElement("div");
+                div.classList.add("ingredient-field", "mb-2");
+                div.innerHTML = '<input type="text" name="ingredient_name" class="form-control" placeholder="Nhập nguyên liệu">';
+                wrapper.appendChild(div);
+                }
+            </script>
+        </div>
+        <div class="col-sm-2"></div>
+    </div>
+</div>
+{% endblock %}

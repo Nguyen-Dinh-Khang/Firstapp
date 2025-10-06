@@ -1,0 +1,77 @@
+{% extends "blog/blog_base.html" %}
+{% load static %}
+
+
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row" style="position: fixed; top:0; left:250px; right:0; padding:10px; z-index:1000">
+        <form method="get" action="{% url 'blogpage' %}" class="d-flex w-100">
+            <input 
+                type="text" 
+                name="data" 
+                placeholder="Tìm theo tác giả..." 
+                class="form-control me-2"
+                value="{{ request.GET.data|default:'' }}"
+            >
+            <button type="submit" class="btn btn-primary">Tìm</button>
+        </form>
+    </div>
+    <br>
+    {% if is_author %}
+    <div class='row' style='height: 5vh'></div>
+    <a href="{% url 'blogauthorpage' author.pk %}"
+       class='row align-items-center' 
+       style='height: 25vh'>
+    
+        <div class='col-sm-2 text-center'>
+            {% if author.avata %}
+            
+                <img src="{{ author.avata.url }}" 
+                     alt="icon" 
+                     class="rounded-circle"
+                     style="width:150px; height:150px;">
+            
+            {% else %}
+            
+                <img src="{% static 'images/icon.jpg' %}" 
+                     alt="default avatar" 
+                     class="rounded-circle"
+                     style="width:150px; height:150px;">
+
+            {% endif %}
+        </div>
+        <div class='col-sm-10 d-flex align-items-center'>
+            <h2 class="mb-0" style='color: black'>{{ author.author_name }}</h2>
+        </div>
+        
+    </a>
+    {% endif %}
+    {% if is_title %}
+    <div class='row' style='height: 5vh'></div>
+    <div class="row">
+        {% for post in posts %}
+            <div class="col-md-6 mb-4">
+                <div class="post-item sidebar_post p-3 border rounded shadow-sm h-100">
+                    <h3>{{ post.title }}</h3>
+                    <p>{{ post.context|linebreaks }}</p>
+
+                    {% if post.post %}
+                        <img src="{{ post.post.url }}" alt="uploaded image" style="max-width:100%; height:auto;">
+                    {% endif %}
+
+                    <p><strong>Author:</strong> {{ post.author }}</p>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <p style="color: red;">No posts available.</p>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+
+

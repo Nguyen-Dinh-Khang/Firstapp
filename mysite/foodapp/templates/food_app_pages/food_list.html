@@ -1,0 +1,32 @@
+{% extends 'food_app_pages/foodapp_base.html' %}
+
+
+
+
+{% block content %}
+<div class='container-fluid'>
+    <div class='row' style='height: 15vh'></div>
+    <div class='row'>
+        <div class='col-sm-2 text-center'></div>
+        <div class='col-sm-8 text-center'>
+            <h1>DISH LIST</h1>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-sm-2 text-center'></div>
+        <div class='col-sm-8 text-start'>
+            {% for dish in List_dish %}
+                <h5>{{ dish.dish_name }}:</h5>
+                <p style="margin-left: 20px;">- Ingredients:
+                    {% for ingredient in dish.ingredients.all %}
+                        {{ ingredient.ingredient_name }}
+                        {% if not forloop.last %}, {% endif %}
+                        {% empty %}
+                            No ingredients
+                    {% endfor %}
+                </p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

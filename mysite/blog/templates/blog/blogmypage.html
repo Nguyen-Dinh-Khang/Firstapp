@@ -1,0 +1,55 @@
+{% extends "blog/blog_base.html" %}
+{% load static %}
+
+
+{% block content %}
+<div class="container-fluid">
+    <div class='row align-items-center' style='height: 25vh'>
+        <div class='col-sm-2 text-center'>
+            {% if data.avata %}
+                <img src="{{ author.avata.url }}" 
+                     alt="icon" 
+                     class="rounded-circle"
+                     style="width:150px; height:150px;">
+            {% else %}
+                <img src="{% static 'images/icon.jpg' %}" 
+                     alt="default avatar" 
+                     class="rounded-circle"
+                     style="width:150px; height:150px;">
+            {% endif %}
+        </div>
+        <div class='col-sm-10 d-flex align-items-center'>
+            <h2 class="mb-0" style='color: black'>{{ data.author_name }}</h2>
+        </div>
+    </div>
+    <div class='row'>
+        <h3 style='color: black'> List: </h3>
+        {% for post in data.posts.all %}
+            <div class="col-md-6 mb-4">
+                    <div class="post-item sidebar_post p-3 border rounded shadow-sm h-100">
+                        <div class='row text-center'>
+                            <h3>{{ post.title }}</h3>
+                        </div>
+
+                        <div class='row'>
+                            <div class='col-sm-6'>
+                                <p>{{ post.context|linebreaks }}</p>
+                            </div>
+
+                            <div class='col-sm-4 d-flex justify-content-center align-items-center'>
+                            {% if post.post %}
+                                <img src="{{ post.post.url }}" alt="uploaded image" style="max-width:100%; height:auto;">
+                            {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <p style="color: red;">No posts available.</p>
+                </div>
+        {% endfor %}
+    </div>
+</div>    
+
+{% endblock %}

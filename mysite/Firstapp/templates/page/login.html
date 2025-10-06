@@ -1,0 +1,19 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Firstapp - login{% endblock %}</title>
+    {% block head %}{% endblock %}
+</head>
+<body>
+
+    <form action= "{% url 'login'%}" method= 'POST'>
+        {% csrf_token %}
+        <p><label>Tên tài khoản</label> {{form.username}} </p>
+        <p><label>Mật khẩu</label> {{form.password}} </p>
+        <input type= 'hidden' name= 'next' value= "/">
+        <input type= 'submit' value= 'login'>
+    </form>
+
+</body>
+</html>

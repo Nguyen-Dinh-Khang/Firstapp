@@ -1,0 +1,30 @@
+{% extends "page/base.html" %}
+
+
+{% block title %}
+{{Student_info.name}}
+{% endblock %}
+
+
+
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-2 text-center">
+        </div>
+        <div class="col-sm-6">
+            <h1>List</h1>
+        </div> 
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-sm-12 text-start">
+            <h1>{{Student_info.name}}</h1>
+            <h6>Tuổi: {{Student_info.age}}</h6>
+            <h6>Lớp: {{Student_info.grade}}</h6>
+        </div> 
+    </div>
+</div>    
+
+{% endblock %}

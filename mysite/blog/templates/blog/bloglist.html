@@ -1,0 +1,42 @@
+{% extends "blog/blog_base.html" %}
+
+
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row" style='height: 5vh'></div>
+    <div class="row" style='height: 5vh'>
+        <form method="get" action="{% url 'bloglist' %}" class="d-flex mb-3">
+            <input 
+                type="text" 
+                name="data" 
+                placeholder="Tìm theo tác giả..." 
+                class="form-control me-2"
+                value="{{ request.GET.data|default:'' }}"
+            >
+            <button type="submit" class="btn btn-primary">Tìm</button>
+        </form>
+    </div>
+    <br>
+    <div class="row">
+        {% for post in posts %}
+            <div class="col-md-6 mb-4">
+                <div class="post-item sidebar_post p-3 border rounded shadow-sm h-100">
+                    <h3>{{ post.title }}</h3>
+                    <p>{{ post.context|linebreaks }}</p>
+
+                    {% if post.post %}
+                        <p>File: <a href="{{ post.post.url }}" target="_blank">{{ post.post.name }}</a></p>
+                    {% endif %}
+
+                    <p><strong>Author:</strong> {{ post.author }}</p>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <p style="color: red;">No posts available.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
